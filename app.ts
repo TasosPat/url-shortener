@@ -1,7 +1,6 @@
 import express, { Application, Request, Response, NextFunction } from "express";
 import cors from "cors";
-// import { urlRoutes } from "./routes/urlRoutes";
-// import { authRoutes } from "./routes/auth.routes";
+import { shortenUrl, sendToUrl, getUrlDetails, deleteShortUrl } from "./controllers/urlControllers";
 
 const app: Application = express();
 
@@ -12,9 +11,17 @@ app.get("/api/health", (req: Request, res: Response) => {
     res.status(200).send({ msg: "Server is running!" });
 });
 
-// app.use("/api/url", urlRoutes);
+// POST	/api/shorten	Shortens a URL
+app.post('/api/shorten', shortenUrl);
 
-// app.use("/api/auth", authRoutes);
+// GET	/:shortUrl	Redirects to the long URL
+app.get('/api/:shortUrl', sendToUrl);
+
+// GET	/api/url/:shortUrl	(Optional) Get details about a short URL
+app.get('/api/url/:shortUrl', getUrlDetails);
+
+// DELETE	/api/url/:shortUrl	(Optional) Delete a shortened URL
+app.delete('/api/url/:shortUrl', deleteShortUrl);
 
 // Error Handling Middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
