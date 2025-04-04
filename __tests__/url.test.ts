@@ -59,3 +59,42 @@ describe("GET /api/health", () => {
               expect(res.body.error).toBe('Short URL not found');
         });
         })
+
+        describe("GET /api/url/:shortUrl", () => {
+            test('200: gets info for the short url', async () => {
+              const res = await request(app)
+                .get("/api/url/test123")
+                .expect(200);
+                
+                expect(res.body).toHaveProperty("original_url");
+                expect(res.body).toHaveProperty("created_at");
+                expect(res.body.original_url).toBe("https://example.com/test1");
+                expect(res.body.created_at).toEqual(expect.any(String));
+                expect(new Date(res.body.created_at).toString()).not.toBe('Invalid Date');
+
+            });
+            test("GET 400: Responds with an appropriate status and error message when provided with a short URL that doesn't exist", async () => {
+              const res = await request(app)
+                .get("/api/url/test133")
+                .expect(400);
+        
+                  expect(res.body.error).toBe('Short URL not found');
+            });
+            })
+
+            describe("DELETE /api/url/:shortUrl", () => {
+                test('204: gets an empty object for a deleted URL', async () => {
+                  const res = await request(app)
+                    .delete("/api/url/test123")
+                    .expect(204);
+                    
+                    expect(res.body).toEqual({});
+    
+                });
+                test("DELETE 404: Responds with an appropriate status and error message when provided with a short URL that doesn't exist", async () => {
+                  const res = await request(app)
+                    .delete("/api/url/test133")
+                    .expect(404);
+                      expect(res.body.msg).toBe('Short URL not found');
+                });
+                })

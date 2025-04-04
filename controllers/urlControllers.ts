@@ -49,14 +49,10 @@ export async function getUrlDetails(req: Request, res: Response, next: NextFunct
 export async function deleteShortUrl(req: Request, res: Response, next: NextFunction): Promise<any> {
     try {
         const { shortUrl } = req.params;
-        const deleted = await removeShortUrl(shortUrl)
-        if (!deleted) {
-            return res.status(400).json({ error: 'Short URL not found' });
-          }
-        return res.status(204).json(deleted)
+        await removeShortUrl(shortUrl)
+        return res.status(204).json()
     }
     catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        next(error);
       }
 }

@@ -1,5 +1,6 @@
 import db from '../db/db'
 import { generateShortUrl } from "../db/seeds/utils";
+import { CustomError } from '../types';
 
 export async function cutUrl(originalUrl: string): Promise<{ shortUrl: string }> {
     try {
@@ -26,11 +27,13 @@ export async function fetchUrlDetails(shortUrl: string): Promise<{ original_url:
     return rows[0];
 }
 
-export async function removeShortUrl(shortUrl: string) : Promise<boolean> {
+export async function removeShortUrl(shortUrl: string) : Promise<void |CustomError> {
     const { rowCount } = await db.query('DELETE FROM urls WHERE short_url = $1', [shortUrl]);
-    if (rowCount) {
-        return true; 
+    if (rowCount === 0) {
+        return Promise.reject<CustomError>({
+          status: 404,
+          msg: 'Short URL not found',
+        });
     }
-    
-    return false;
+       return;  
 }

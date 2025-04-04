@@ -3,3 +3,9 @@ export interface UrlEntry {
     short_url: string;
     created_at: Date;
   }
+
+export interface CustomError {
+    status: number;
+    msg: string;
+  }
+  
