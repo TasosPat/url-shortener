@@ -42,3 +42,20 @@ describe("GET /api/health", () => {
           expect(res.body.error).toBe('longUrl is required');
     });
     })
+
+    describe("GET /api/:shortUrl", () => {
+        test('302: redirects to the original URL when a valid shortUrl is provided', async () => {
+          const res = await request(app)
+            .get("/api/test123")
+            .expect(302);
+            
+            expect(res.headers.location).toBe("https://example.com/test1");
+        });
+        test("GET 400: Responds with an appropriate status and error message when provided with a short URL that doesn't exist", async () => {
+          const res = await request(app)
+            .get("/api/test133")
+            .expect(400);
+    
+              expect(res.body.error).toBe('Short URL not found');
+        });
+        })
